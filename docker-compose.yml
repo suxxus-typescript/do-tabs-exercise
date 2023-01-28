@@ -1,0 +1,16 @@
+version: "0"
+name: vainilla-ts
+services:
+  develop:
+    image: vainalla-ts/dev
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: vainilla-ts
+    volumes:
+      - .:/app
+      - ./src:/app
+      - ./public:/app
+      - ./node_modules:/app
+    ports:
+      - 8900:5173
