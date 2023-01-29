@@ -1,16 +1,16 @@
 version: "0"
-name: vainilla-ts
+name: do-tabs
 services:
-  develop:
-    image: vainalla-ts/dev
+  frontend:
+    image: vainilla-ts/dev
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: vainilla-ts
+    container_name: do-tabs
     volumes:
       - .:/app
       - ./src:/app
       - ./public:/app
       - ./node_modules:/app
     ports:
-      - 8900:5173
+      - 5900:5173

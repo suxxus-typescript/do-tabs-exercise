@@ -1,30 +1,127 @@
 import "./style.css";
-import typescriptLogo from "./typescript.svg";
-import { setupCounter } from "./counter";
 
 const App = document.querySelector("#app");
-const Counter = document.querySelector("#counter");
 
-if (App && App.innerHTML) {
-  App.innerHTML = `
-  <div>
-    <a href="https://vitejs.dev" target="_blank">
-      <img src="/vite.svg" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://www.typescriptlang.org/" target="_blank">
-      <img src="${typescriptLogo}" class="logo vanilla" alt="TypeScript logo" />
-    </a>
-    <h1>Vite + TypeScript</h1>
-    <div class="card">
-      <button id="counter" type="button"></button>
-    </div>
-    <p class="read-the-docs">
-      Click on the Vite and TypeScript logos to learn more
-    </p>
-  </div>
-`;
+type TabsItem = {
+  name: string;
+  id: string;
+};
+
+type Tab = {
+  title: string;
+  items: TabsItem[];
+  tabs?: Tabs;
+};
+
+type Tabs = Tab[];
+
+function tree2(tabs: Tabs, acc: string[]): string[] {
+  tabs.forEach((tab) => {
+    acc.push(tab.title);
+    if (tab.tabs) {
+      tree2(tab.tabs, acc);
+    }
+  });
+
+  return acc;
 }
 
-if (Counter) {
-  setupCounter(Counter as HTMLButtonElement);
+function TabMenu({ title, items }: Tab): Node {
+  const Div = document.createElement("div");
+  const Button = document.createElement("button");
+  const Dl = document.createElement("dl");
+
+  Dl.classList.add("menu_items");
+
+  Button.textContent = title;
+  Button.classList.add("menu_title");
+
+  Div.appendChild(Button);
+
+  items.forEach(({ name, id }: TabsItem) => {
+    const Item = document.createElement("dd");
+    const A = document.createElement("a");
+    A.setAttribute("href", "#");
+    A.textContent = name;
+    A.setAttribute("id", id);
+    A.setAttribute("data-tabname", name);
+
+    Item.appendChild(A);
+    Dl.appendChild(Item);
+  });
+  //
+  Div.appendChild(Dl);
+  //
+  return Div;
 }
+
+function TabsMenu(tabs: Tabs, nodes: Node[]): Node {
+  const TabContainer = document.createElement("ul");
+  TabContainer.classList.add("menu");
+  //
+  tabs.forEach((tab: Tab) => {
+    const Li = document.createElement("li");
+    Li.appendChild(TabMenu(tab));
+    nodes.push(Li);
+
+    if (tab.tabs) {
+      TabsMenu(tab.tabs, nodes);
+    }
+  });
+
+  nodes.forEach((li) => {
+    TabContainer.appendChild(li);
+  });
+
+  return TabContainer;
+}
+
+((app) => {
+  const tabs: Tabs = [
+    {
+      title: "my title",
+      items: [
+        {
+          name: "item 1",
+          id: "xsez",
+        },
+        {
+          name: "item 2",
+          id: "yttys",
+        },
+      ],
+      tabs: [
+        {
+          title: "submenu",
+          items: [
+            {
+              name: "sub item 1",
+              id: "xdfssrs",
+            },
+          ],
+          tabs: [
+            { title: "submenu 2", items: [{ name: "pepe", id: "xtyed" }] },
+          ],
+        },
+      ],
+    },
+    {
+      title: "my title 2",
+      items: [
+        {
+          name: "item 1",
+          id: "xsez",
+        },
+        {
+          name: "item 2",
+          id: "yttys",
+        },
+      ],
+    },
+  ];
+
+  if (app) {
+    // console.log(tree2(tabs, []));
+    app.appendChild(TabsMenu(tabs, []));
+  }
+})(App);
